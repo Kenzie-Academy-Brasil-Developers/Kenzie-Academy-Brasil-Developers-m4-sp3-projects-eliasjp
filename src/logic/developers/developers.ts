@@ -1,5 +1,5 @@
 import { client } from "../../database"
-import { Request, Response } from "express"
+import { query, Request, Response } from "express"
 import format from "pg-format"
 
 export async function createDeveloper (request: Request, response: Response): Promise<Response | void>{
@@ -86,4 +86,22 @@ export async function readDeveloperProjects (request: Request, response: Respons
     const queryResult = await client.query(queryString)
     
     return response.status(200).json(queryResult.rows)
+}
+
+export async function updateUser (request: Request, response: Response): Promise<Response>{
+    const queryString = format(`
+        UPDATE
+            "developers"
+        SET
+            (%I) = (%L)
+        WHERE
+            "id" = %s;
+    `,
+        Object.keys(request.body),
+        Object.values(request.body),
+        request.params.id
+    )
+    const queryResult = await client.query(queryString)
+
+    return response.status(200).json()
 }
