@@ -1,6 +1,7 @@
 import express from "express";
 import { runDatabase } from "./database"
-import { createDeveloper, readAllDevelopers, readDeveloperById, readDeveloperProjects } from "./logic/developers/developers";
+import { createDeveloper, readAllDevelopers, readDeveloperById, readDeveloperProjects, updateUser } from "./logic/developers/developers";
+import { checkUserExistance, updateUserReqBody } from "./middleware/middleware";
 
 
 const app = express()
@@ -11,6 +12,7 @@ app.listen(3333, async () => {
 })
 
 app.get("/developers/:id", readDeveloperById)
-app.get("/developers/:id/projects", readDeveloperProjects)
+app.get("/developers/:id/projects", checkUserExistance, readDeveloperProjects)
 app.post("/developers", createDeveloper)
 app.get("/developers", readAllDevelopers)
+app.patch("/developers/:id", checkUserExistance, updateUserReqBody, updateUser)
