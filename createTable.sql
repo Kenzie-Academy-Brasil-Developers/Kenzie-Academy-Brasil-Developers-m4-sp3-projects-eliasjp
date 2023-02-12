@@ -26,12 +26,15 @@ CREATE TABLE IF NOT EXISTS projects (
 
 CREATE TABLE IF NOT EXISTS technologies (
     "id" SERIAL PRIMARY KEY,
-    "name" VARCHAR(30) NOT NULL,
-    "specification" TEXT NOT NULL
+    "name" VARCHAR(30) NOT NULL
 );
+
+INSERT INTO "technologies" ("name")
+VALUES ('Javascript'), ('Python'), ('React'), ('Express.js'), ('HTML'), ('CSS'), ('Django'), ('PostgresSQL'), ('MongoDB');
 
 CREATE TABLE IF NOT EXISTS project_technologies (
     "id" SERIAL PRIMARY KEY,
+    "addedIn" DATE NOT NULL,
     "projectID" INTEGER REFERENCES "projects"("id") NOT NULL,
     "technologyID" INTEGER REFERENCES "technologies"("id") NOT NULL
 );
