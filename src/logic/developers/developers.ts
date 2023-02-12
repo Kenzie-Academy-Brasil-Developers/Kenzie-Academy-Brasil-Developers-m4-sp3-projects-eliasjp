@@ -95,13 +95,29 @@ export async function updateUser (request: Request, response: Response): Promise
         SET
             (%I) = (%L)
         WHERE
-            "id" = %s;
+            "id" = %s
+        RETURNING
+            *;
     `,
         Object.keys(request.body),
         Object.values(request.body),
         request.params.id
     )
     const queryResult = await client.query(queryString)
+
+    return response.status(200).json(queryResult.rows[0])
+}
+
+export async function deleteUser (request: Request, response: Response): Promise<Response>{
+    const queryString = format(`
+        DELETE FROM
+            "developers"
+        WHERE
+            "id" = %s
+    `,
+        request.params.id
+    )
+    await client.query(queryString)
 
     return response.status(200).json()
 }

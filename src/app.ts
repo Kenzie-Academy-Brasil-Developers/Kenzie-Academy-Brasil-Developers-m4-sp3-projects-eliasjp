@@ -1,6 +1,6 @@
 import express from "express";
 import { runDatabase } from "./database"
-import { createDeveloper, readAllDevelopers, readDeveloperById, readDeveloperProjects, updateUser } from "./logic/developers/developers";
+import { createDeveloper, deleteUser, readAllDevelopers, readDeveloperById, readDeveloperProjects, updateUser } from "./logic/developers/developers";
 import { checkUserExistance, updateUserReqBody } from "./middleware/middleware";
 
 
@@ -16,3 +16,4 @@ app.get("/developers/:id/projects", checkUserExistance, readDeveloperProjects)
 app.post("/developers", createDeveloper)
 app.get("/developers", readAllDevelopers)
 app.patch("/developers/:id", checkUserExistance, updateUserReqBody, updateUser)
+app.delete("/developers/:id", checkUserExistance, deleteUser)

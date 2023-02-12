@@ -15,7 +15,7 @@ export async function checkUserExistance (request: Request, response: Response, 
         FROM
             "developers"
         WHERE
-            id = %s;
+            "id" = %s;
     `,
         request.params.id
     )
