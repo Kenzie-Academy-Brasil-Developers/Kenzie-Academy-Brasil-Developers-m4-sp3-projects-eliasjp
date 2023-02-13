@@ -1,7 +1,7 @@
 import express from "express";
 import { runDatabase } from "./database"
-import { createDeveloper, deleteUser, readAllDevelopers, readDeveloperById, readDeveloperProjects, updateUser } from "./logic/developers/developers";
-import { checkUserExistance, updateUserReqBody } from "./middleware/middleware";
+import { createDeveloper, createDevInfo, deleteUser, readAllDevelopers, readDeveloperById, readDeveloperProjects, updateDevInfo, updateUser } from "./logic/developers/developers";
+import { checkEnumOS, checkUserExistance, updateDevReqBody } from "./middleware/middleware";
 
 
 const app = express()
@@ -15,5 +15,7 @@ app.get("/developers/:id", readDeveloperById)
 app.get("/developers/:id/projects", checkUserExistance, readDeveloperProjects)
 app.post("/developers", createDeveloper)
 app.get("/developers", readAllDevelopers)
-app.patch("/developers/:id", checkUserExistance, updateUserReqBody, updateUser)
+app.patch("/developers/:id", checkUserExistance, updateDevReqBody, updateUser)
 app.delete("/developers/:id", checkUserExistance, deleteUser)
+app.post("/developers/:id/infos", checkUserExistance, checkEnumOS, createDevInfo)
+app.patch("/developers/:id/infos", checkUserExistance, checkEnumOS, updateDevInfo)

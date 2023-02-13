@@ -121,3 +121,55 @@ export async function deleteUser (request: Request, response: Response): Promise
 
     return response.status(200).json()
 }
+
+export async function createDevInfo (request: Request, response: Response): Promise<Response>{
+    const devInfoString = format(`
+        INSERT INTO
+            "developer_info" (%I)
+        VALUES
+            (%L)
+        RETURNING *;
+    `,
+        Object.keys(request.body),
+        Object.values(request.body)
+    )
+    const devInfoResult = await client.query(devInfoString)
+
+    const devString = format(`
+        UPDATE
+            "developers"
+        SET
+            "developerInfoID" = %s
+        WHERE
+            "id" = %s
+        RETURNING *;
+        `,
+            devInfoResult.rows[0].id,
+            request.params.id
+    )
+    const devResult = await client.query(devString)
+
+    return response.status(201).json(devResult.rows[0])
+}
+
+export async function updateDevInfo (request: Request, response: Response): Promise<Response>{
+    const queryString = format(`
+        UPDATE
+            "developer_info" AS "devI"
+        SET
+            (%I) = ROW (%L)
+        FROM
+            "developers" as dev
+        WHERE
+            dev."developerInfoID" = "devI"."id"
+        RETURNING *;
+    `,
+        Object.keys(request.body),
+        Object.values(request.body),
+        request.params.id
+    )
+    console.log(queryString)
+    const queryResult = await client.query(queryString)
+
+    return response.status(200).json(queryResult.rows[0])
+}
