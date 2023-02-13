@@ -6,7 +6,7 @@
   "author": "eliasjp <illumine1998@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --cls --rs --ignore-watch node_modules src/app.ts"
+    "dev": "ts-node-dev --clear --rs --ignore-watch node_modules src/app.ts"
   },
   "devDependencies": {
     "@types/express": "^4.17.17",
