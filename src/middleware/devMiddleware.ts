@@ -23,13 +23,24 @@ export async function checkUserExistance (request: Request, response: Response, 
     )
     const queryResult = await client.query(queryString)
 
-    queryResult.rows.length !== 0 ? next() : response.status(404).json({ message: "User not found." })
+    queryResult.rows.length !== 0 ? next() : response.status(404).json({ message: "Developer not found." })
 }
 
-export function updateDevReqBody (request: Request, response: Response, next: NextFunction): Response | void{
+export function DevReqBody (request: Request, response: Response, next: NextFunction): Response | void{
     try {
+        Object.keys(request.body).length === 0 && throwError("No object detected.")
         Object.keys(request.body).forEach((key: string) => !contentDevBody.includes(key) && throwError("Invalid property."))
         Object.values(request.body).forEach((value: any) => typeof value !== "string" && throwError(`Incorrect value.`))
+        next()
+    }
+    catch (err){
+        return response.status(400).json({ message: err })
+    }
+}
+
+export function createDevReqBody (request: Request, response: Response, next: NextFunction): Response | void{
+    try {
+        contentDevBody.forEach((key: string) => !Object.keys(request.body).includes(key) && throwError(`Missing property ${key}.`))
         next()
     }
     catch (err){
@@ -55,5 +66,27 @@ export function checkEnumOS (request: Request, response: Response, next: NextFun
     }
     catch (err){
         return response.status(400).json({ message : err })
+    }
+}
+
+export function createDevInfoReqBody (request: Request, response: Response, next: NextFunction): Response | void{
+    try {
+        contentDevInfoBody.forEach((key: string) => !Object.keys(request.body).includes(key) && throwError(`Missing property ${key}.`))
+        next()
+    }
+    catch (err){
+        return response.status(400).json({ message: err })
+    }
+}
+
+export function checkDevInfoReqBody (request: Request, response: Response, next: NextFunction): Response | void{
+    try {
+        Object.keys(request.body).length === 0 && throwError("No object detected.")
+        Object.keys(request.body).forEach((key: string) => !contentDevInfoBody.includes(key) && throwError("Invalid property."))
+        Object.values(request.body).forEach((value: any) => typeof value !== "string" && throwError(`Incorrect value.`))
+        next()
+    }
+    catch (err){
+        return response.status(400).json({ message: err })
     }
 }
