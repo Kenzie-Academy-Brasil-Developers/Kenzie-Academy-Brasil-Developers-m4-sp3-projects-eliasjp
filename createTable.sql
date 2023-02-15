@@ -9,16 +9,16 @@ CREATE TABLE IF NOT EXISTS developer_info (
 CREATE TABLE  IF NOT EXISTS developers (
     "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(50) NOT NULL,
-    "email" VARCHAR(50) NOT NULL,
+    "email" VARCHAR(50) UNIQUE NOT NULL,
     "developerInfoID" INTEGER REFERENCES "developer_info"("id") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS projects (
     "id" SERIAL PRIMARY KEY,
     "name" VARCHAR(50) NOT NULL,
-    "description" VARCHAR(50) NOT NULL,
+    "description" TEXT NOT NULL,
     "estimatedTime" VARCHAR(20) NOT NULL,
-    "repository" VARCHAR(20) NOT NULL,
+    "repository" VARCHAR(120) NOT NULL,
     "startDate" DATE NOT NULL,
     "endDate" DATE,
     "developerID" INTEGER REFERENCES "developers"("id") NOT NULL
