@@ -66,7 +66,9 @@ export async function readProjects (request: Request, response: Response): Promi
         LEFT JOIN
             "project_technologies" AS prj_t
         ON
-            "prj_t"."projectID" = prj."id";
+            "prj_t"."projectID" = prj."id"
+        ORDER BY
+            prj."id" asc;
     `,
         request.params.id
     )
@@ -96,13 +98,13 @@ export async function updateProject (request: Request, response: Response): Prom
     }
     catch (err: any){
         if (err.message.includes("invalid input syntax")){
-            return response.status(400).json({ message: "Unexpected error occured." })
+            return response.status(400).json({ message: "A key has an incorrect input value." })
         }
         else if (err.message.includes('violates foreign key constraint "projects_developerID_fkey"')){
             return response.status(409).json({ message: "Developer ID does not exists." })
         }
         else {
-            return response.status(400).json({ message: "Unexpected error occured." })
+            return response.status(500).json({ message: `Unexpected error: ${err}.` })
         }
     }
 }

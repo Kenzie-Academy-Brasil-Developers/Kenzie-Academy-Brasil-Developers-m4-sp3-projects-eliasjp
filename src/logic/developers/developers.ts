@@ -17,10 +17,9 @@ export async function createDeveloper (request: Request, response: Response): Pr
     }
     catch (err: any){
         return err.message.includes('unique constraint "unique_email"')
-        ? response.status(400).json({ message: "Email already exists." })
-        : response.status(400).json({ message: "An error has ocurred." })
+        ? response.status(409).json({ message: "Email already registered." })
+        : response.status(500).json({ message: `Unexpected Error: ${err.message}` })
     }
-
 }
 
 export async function readDeveloperById (request: Request, response: Response): Promise<Response | void>{
@@ -98,12 +97,12 @@ export async function readDeveloperProjects (request: Request, response: Respons
 }
 
 export async function updateUser (request: Request, response: Response): Promise<Response>{
-        try {
+    try {
         const queryString: string = format(`
             UPDATE
                 "developers"
             SET
-                (%I) = (%L)
+                (%I) = ROW (%L)
             WHERE
                 "id" = %s
             RETURNING
@@ -120,7 +119,7 @@ export async function updateUser (request: Request, response: Response): Promise
     catch (err: any){
         return err.message.includes('unique constraint "unique_email"')
         ? response.status(400).json({ message: "Email already exists." })
-        : response.status(400).json({ message: "An error has ocurred." })
+        : response.status(400).json({ message: err.message })
     }
 }
 
@@ -141,13 +140,13 @@ export async function deleteUser (request: Request, response: Response): Promise
     catch (err: any){
         return err.message.includes('violates foreign key constraint "projects_developerID_fkey"')
         ? response.status(409).json({ message: "Violates foreign key constraint" })
-        : response.status(400).json({ message: "Unexpected error happened" })
+        : response.status(500).json({ message: `Unexpected error: ${err.message}` })
     }
 }
 
 export async function createDevInfo (request: Request, response: Response): Promise<Response>{
     const queryString: string = `
-        SELECT 
+        SELECT
             dev.*, 
             "devI"."developerSince", "devI"."prefferedOS"
         FROM
@@ -157,7 +156,7 @@ export async function createDevInfo (request: Request, response: Response): Prom
         ON
             dev."developerInfoID" = "devI"."id";
     `
-    const queryResult: QueryResult<IDeveloperExtension & IDeveloperInfo> = await client.query(queryString)
+    const queryResult: QueryResult<IMergeDevExtInfo> = await client.query(queryString)
 
     if (queryResult.rows[0].developerInfoID !== null){
         return response.status(409).json({ message: "Developer information alredy registered." })
