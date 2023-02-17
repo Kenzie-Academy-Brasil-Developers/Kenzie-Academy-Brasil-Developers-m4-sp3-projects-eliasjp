@@ -35,6 +35,6 @@ VALUES ('Javascript'), ('Python'), ('React'), ('Express.js'), ('HTML'), ('CSS'),
 CREATE TABLE IF NOT EXISTS project_technologies (
     "id" SERIAL PRIMARY KEY,
     "addedIn" DATE NOT NULL,
-    "projectID" INTEGER REFERENCES "projects"("id") NOT NULL,
+    "projectID" INTEGER REFERENCES "projects"("id") ON DELETE CASCADE NOT NULL,
     "technologyID" INTEGER REFERENCES "technologies"("id") NOT NULL
 );

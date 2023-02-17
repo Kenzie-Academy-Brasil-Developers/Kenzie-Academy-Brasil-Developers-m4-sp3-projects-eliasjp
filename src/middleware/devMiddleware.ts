@@ -28,9 +28,9 @@ export async function checkUserExistance (request: Request, response: Response, 
 
 export function DevReqBody (request: Request, response: Response, next: NextFunction): Response | void{
     try {
-        Object.keys(request.body).length === 0 && throwError("No object detected.")
-        Object.keys(request.body).forEach((key: string) => !contentDevBody.includes(key) && throwError("Invalid property."))
-        Object.values(request.body).forEach((value: any) => typeof value !== "string" && throwError(`Incorrect value.`))
+        Object.keys(request.body).forEach((key: string) => !contentDevBody.includes(key) && delete request.body[key])
+        Object.keys(request.body).forEach((key: any) => typeof request.body[key] !== "string" && throwError(`Incorrect value of ${key}.`))
+        Object.keys(request.body).length === 0 && throwError("Invalid request body.")
         next()
     }
     catch (err){
@@ -51,7 +51,7 @@ export function createDevReqBody (request: Request, response: Response, next: Ne
 export function updateDevInfoReqBody (request: Request, response: Response, next: NextFunction): Response | void{
     try {
         Object.keys(request.body).forEach((key: string) => !contentDevInfoBody.includes(key) && throwError("Invalid property."))
-        Object.values(request.body).forEach((value: any) => typeof value !== "string" && throwError(`Incorrect value.`))
+        Object.keys(request.body).forEach((key: any) => typeof request.body[key] !== "string" && throwError(`Incorrect key of ${key}.`))
         next()
     }
     catch (err){
@@ -81,9 +81,9 @@ export function createDevInfoReqBody (request: Request, response: Response, next
 
 export function checkDevInfoReqBody (request: Request, response: Response, next: NextFunction): Response | void{
     try {
-        Object.keys(request.body).length === 0 && throwError("No object detected.")
-        Object.keys(request.body).forEach((key: string) => !contentDevInfoBody.includes(key) && throwError("Invalid property."))
-        Object.values(request.body).forEach((value: any) => typeof value !== "string" && throwError(`Incorrect value.`))
+        Object.keys(request.body).forEach((key: string) => !contentDevInfoBody.includes(key) && delete request.body[key])
+        Object.keys(request.body).forEach((key: string) => typeof request.body[key] !== "string" && throwError(`Incorrect value of ${key}.`))
+        Object.keys(request.body).length === 0 && throwError("Invalid request body.")
         next()
     }
     catch (err){

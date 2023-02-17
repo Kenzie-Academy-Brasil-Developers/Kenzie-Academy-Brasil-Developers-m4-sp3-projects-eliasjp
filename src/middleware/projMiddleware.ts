@@ -2,7 +2,7 @@ import { client } from "../database"
 import { Request, Response, NextFunction, query } from "express"
 import format from "pg-format"
 
-const contentProjBody = ["name", "description", "estimatedTime", "repository", "startDate", "developerID"]
+const contentProjBody = ["name", "description", "estimatedTime", "repository", "startDate", "endDate", "developerID"]
 export const techArray = ["javascript", "python", "react", "express.js", "html", "css", "django", "postgresql", "mongodb"]
 
 function throwError (err: any){
@@ -27,8 +27,8 @@ export async function checkProjectExistance (request: Request, response: Respons
 
 export function checkBodyProjProperties (request: Request, response: Response, next: NextFunction): Response | void{
     try {
-        contentProjBody.forEach((element: string) => !Object.keys(request.body).includes(element) && throwError(`Missing property ${element}`))
-        Object.keys(request.body).forEach((key: string) => !contentProjBody.includes(key) && key !== "endDate" && throwError("Invalid property."))
+        Object.keys(request.body).forEach((key: string) => !contentProjBody.includes(key) && key !== "endDate" && delete request.body[key])
+        contentProjBody.forEach((element: string) => !Object.keys(request.body).includes(element) && element !=="endDate" && throwError(`Missing property ${element}`))
         next()
     }
     catch (err){
@@ -38,7 +38,8 @@ export function checkBodyProjProperties (request: Request, response: Response, n
 
 export function checkBodyProjUpdate (request: Request, response: Response, next: NextFunction): Response | void{
     try {
-        Object.keys(request.body).forEach((key: string) => !contentProjBody.includes(key) && throwError("Invalid property."))
+        Object.keys(request.body).forEach((key: string) => !contentProjBody.includes(key) && delete request.body[key])
+        Object.keys(request.body).length === 0 &&  throwError("Invalid request body.")
         next()
     }
     catch (err){
@@ -50,7 +51,7 @@ export function checkBodyProjUpdate (request: Request, response: Response, next:
 
 export function checkBodyProjTechnologies (request: Request, response: Response, next: NextFunction): Response | void{
     try {
-        Object.keys(request.body).forEach((key) => key !== "technology" && throwError("Invalid property."))
+        Object.keys(request.body).forEach((key) => key !== "technology" && delete request.body[key])
         !techArray.includes(request.body.technology) && throwError("Technology avaliable: 'javascript', 'python', 'react', 'express.js', 'html', 'css', 'django', 'postgresql', 'mongodb'")
         next()
     }
